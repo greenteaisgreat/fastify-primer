@@ -5,7 +5,18 @@ const fastify = Fastify({
 });
 
 fastify.get("/", (req, res) => {
-  res.send({ hello: "world" });
+  res.send({ message: `Hello World!` });
+});
+
+//same exact functionality as fastify.get on line 7
+fastify.route({
+  method: "GET",
+  url: "/hello/:name",
+  handler: (req, res) => {
+    return {
+      message: `Hello there, ${req.params.name}!`,
+    };
+  },
 });
 
 fastify.listen({ port: 3000 }, (err, address) => {
