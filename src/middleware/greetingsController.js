@@ -6,10 +6,41 @@
 //2.) optional headers - options
 //3.) the termination of the controller once it's finished - done
 const greetingsController = (fastify, options, done) => {
-  fastify.get("/yo/:name", options, (req, res) => {
-    res.send({ message: `Hello, ${req.params.name} ${req.query.lastName}!` });
+  fastify.get("/", (req, res) => {
+    res.send({ message: `Hello, world!` });
   });
 
   //must invoke done() to signal the end of the controller
   done();
 };
+
+// const options = {
+//   schema: {
+//     query: {
+//       properties: {
+//         lastName: { type: "string" },
+//       },
+//       required: ["lastName"],
+//     },
+//     params: {
+//       properties: {
+//         //defines the structure of the 'name' parameter
+//         name: { type: "string" },
+//       },
+//       //not that necessary, as if you specify in the URL scheme that
+//       //a param is there (:name), it's required by default
+//       required: ["name"],
+//     },
+//     //allows you to handle different response codes
+//     response: {
+//       200: {
+//         properties: {
+//           message: { type: "string" },
+//         },
+//         required: ["message"],
+//       },
+//     },
+//   },
+// };
+
+export default greetingsController;
