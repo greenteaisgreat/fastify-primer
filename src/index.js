@@ -4,24 +4,83 @@ const fastify = Fastify({
   logger: true,
 });
 
-fastify.get("/", (req, res) => {
-  res.send({ message: `Hello World!` });
+const options = {
+  schema: {
+    query: {
+      properties: {
+        lastName: { type: "string" },
+      },
+      required: ["lastName"],
+    },
+    params: {
+      properties: {
+        //defines the structure of the 'name' parameter
+        name: { type: "string" },
+      },
+      //not that necessary, as if you specify in the URL scheme that
+      //a param is there (:name), it's required by default
+      required: ["name"],
+    },
+    //allows you to handle different response codes
+    response: {
+      200: {
+        properties: {
+          message: { type: "string" },
+        },
+        required: ["message"],
+      },
+    },
+  },
+};
+
+fastify.get("/yo/:name", options, (req, res) => {
+  res.send({ message: `Hello, ${req.params.name} ${req.query.lastName}!` });
 });
 
-//same exact functionality as fastify.get on line 7
+//same exact functionality as fastify.get above, just a different
+//way to implement it; take note of the options object as well
 fastify.route({
   method: "GET",
   url: "/hello/:name",
+  //defines a JSON schema
+  schema: {
+    query: {
+      properties: {
+        lastName: { type: "string" },
+      },
+      required: ["lastName"],
+    },
+    params: {
+      properties: {
+        //defines the structure of the 'name' parameter
+        name: { type: "string" },
+      },
+      //not that necessary, as if you specify in the URL scheme that
+      //a param is there (:name), it's required by default
+      required: ["name"],
+    },
+    //allows you to handle different response codes
+    response: {
+      200: {
+        properties: {
+          message: { type: "string" },
+        },
+        required: ["message"],
+      },
+    },
+  },
   handler: (req, res) => {
     return {
-      message: `Hello there, ${req.params.name}!`,
+      //will give an error if the key doesn't match the response schema
+      // message2: `Hello there, ${req.params.name}!`
+      message: `Hello there, ${req.params.name} ${req.query.lastName}!`,
     };
   },
 });
 
-fastify.listen({ port: 3000 }, (err, address) => {
-  if (err) {
-    fastify.log.error("There was an error: ", err);
-    process.exit(1);
-  }
-});
+try {
+  fastify.listen({ port: 3000 });
+} catch (err) {
+  fastify.log.error(`There was a server error: ${err}`);
+  process.exit(1);
+}
