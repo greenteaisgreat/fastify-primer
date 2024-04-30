@@ -1,13 +1,28 @@
 import Fastify from "fastify";
-import greetingsController from "./middleware/greetingsController.js";
+import greetingsController from "./controllers/greetingsController.js";
+import dbController from "./controllers/dbController.js";
+import fastifyMongodb from "@fastify/mongodb";
+import mongoose from "mongoose";
+import "dotenv/config";
 
 const fastify = Fastify({
   logger: true,
 });
 
+//Data Access Plugin (database access)
+fastify.register(fastifyMongodb, {
+  host: "localhost",
+  user: "root",
+  password: "lol",
+  database: "myDB",
+  //changes this API to use promises instead of callbacks
+  promise: true,
+});
+
 //fastify plugin that acts similarly to an express router;
 //prefix is used to designate the URI endpoint
 fastify.register(greetingsController, { prefix: "/greetings" });
+fastify.register(dbController, { prefix: "/db" });
 
 try {
   fastify.listen({ port: 3000 });
