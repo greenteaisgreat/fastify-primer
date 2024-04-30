@@ -5,7 +5,8 @@ const fastify = Fastify({
   logger: true,
 });
 
-//fastify plugin that acts similarly to an express router
+//fastify plugin that acts similarly to an express router;
+//prefix is used to designate the URI endpoint
 fastify.register(greetingsController, { prefix: "/greetings" });
 
 try {
